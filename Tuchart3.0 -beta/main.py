@@ -10,10 +10,9 @@ from layout import Ui_MainWindow
 from pandas import DataFrame as df
 import pandas as pd
 import tushare as ts
-import cPickle
+import pickle
 import numpy as np
-import warnings
-warnings.filterwarnings("ignore")
+
 list1 = []
 
 
@@ -24,35 +23,36 @@ class MyUi(QMainWindow):
         self.ui.setupUi(self)
         cwd = os.getcwd()
         cwd = str(cwd)
+
         if os.path.isfile(cwd+"/time"):
-            with open("time","r") as outfile:#reads current time
-                history = cPickle.load(outfile)
+            with open("time","rb") as outfile:#reads current time
+                history = pickle.load(outfile)
             if (datetime.now()-history).total_seconds()<43200: #measures if time elapse>12 hours
                 print("Less than 12 hours. Loading previously saved Pickle...")
-                #with open("time","w") as infile: #update time
-                    #cPickle.dump(datetime.now(),infile)
 
             else:
                 print("More than 12 hours. Updating Pickle...")
                 data = ts.get_industry_classified()
-                with open("class","w+") as outfile:
-                    cPickle.dump(data,outfile)
+                with open("class","wb+") as outfile:
+                    pickle.dump(data,outfile)
                 now = datetime.now()
-                with open("time", "w+") as outfile: #update time
-                    cPickle.dump(now, outfile)
+                with open("time", "wb+") as outfile: #update time
+                    pickle.dump(now, outfile)
 
         else:
             print("No Pickle found!") #If this is first time using tuchart in this directory
             data = df()
             data = ts.get_industry_classified()
-            with open('class', 'w+') as outfile: #records pickle
-                cPickle.dump(data, outfile)
+            with open('class', 'wb+') as outfile: #records pickle
+                pickle.dump(data, outfile)
             now = datetime.now()
-            with open("time", "w+") as outfile:
-                cPickle.dump(now,outfile)
+            with open("time", "wb+") as outfile:
+                pickle.dump(now,outfile)
 
-        with open("class", "r") as infile:  # reads current time
-            series = cPickle.load(infile)
+        with open("class", "rb") as infile:  # reads current time
+            series = pickle.load(infile)
+            
+
         #series = pd.read_json(cwd + "\\class.json")
         #series = ts.get_industry_classified()
         series = pd.DataFrame(series)
@@ -65,6 +65,7 @@ class MyUi(QMainWindow):
         past = dateobj - timedelta(days = 7)  #minus a week to start date
         pasttime = datetime.strftime(past, "%Y/%m/%d")
         pastQ = QDate.fromString(pasttime,"yyyy/MM/dd") #convert to qtime so that widget accepts the values
+
 
 
 
@@ -101,6 +102,8 @@ class MyUi(QMainWindow):
         local_url = QUrl.fromLocalFile(file_path)
         self.ui.webView.load(local_url)
         #self.ui.commandLinkButton.setFixedSize(50, 50)
+
+
         self.ui.search_btn.clicked.connect(lambda: self.search_comp(series))
         self.ui.init_code_btn.clicked.connect(lambda: self.code_sort_tree(series))
         self.ui.init_category_btn.clicked.connect(lambda: self.init_treeWidget(list1, series))
@@ -144,7 +147,7 @@ class MyUi(QMainWindow):
             #var = showcollection(i) #Display database items
             for idx,val in enumerate(list2):
                 child = QTreeWidgetItem(parent)
-                child.setText(0, name[idx]+"-"+str(val))
+                child.setText(0, name[idx]+"-"+val)
                 #for i in Drag:
                     #grandson = QTreeWidgetItem(child)     #Commented out because increases program response time
                     #grandson.setText(0, i)
@@ -179,7 +182,7 @@ class MyUi(QMainWindow):
 
 
     def modifycombo(self,pastQL,pastQ):
-        if self.ui.combobox.currentText()==u"复权": #if 复权 is selected, clear all existing queries to avoid value conflict
+        if self.ui.combobox.currentText()=="复权": #if 复权 is selected, clear all existing queries to avoid value conflict
             self.ui.label_2.show()
             self.ui.dateEdit_2.show()
             self.ui.dateEdit.setDate(pastQL)
@@ -188,7 +191,7 @@ class MyUi(QMainWindow):
             self.ui.comboBox.clear()
             self.ui.comboBox.addItems(["hfq", "qfq"])
             self.ui.treeWidget_2.clear()
-        if self.ui.combobox.currentText()==u"K线":
+        if self.ui.combobox.currentText()=="K线":
             self.ui.label_2.show()
             self.ui.dateEdit_2.show()
             self.ui.dateEdit.setDate(pastQL)
@@ -197,14 +200,14 @@ class MyUi(QMainWindow):
             self.ui.comboBox.clear()
             self.ui.comboBox.addItems(["D", "W", "M", "5", "15", "30", "60"])#same as above
             self.ui.treeWidget_2.clear()
-        if self.ui.combobox.currentText()==u"分笔数据":
+        if self.ui.combobox.currentText()=="分笔数据":
             self.ui.interval_label.hide()
             self.ui.comboBox.hide()
             self.ui.label_2.hide()
             self.ui.dateEdit_2.hide()
             self.ui.dateEdit.setDate(pastQ)
             self.ui.treeWidget_2.clear()
-        if self.ui.combobox.currentText()==u"历史分钟":
+        if self.ui.combobox.currentText()=="历史分钟":
             self.ui.interval_label.hide()
             self.ui.comboBox.show()
             self.ui.comboBox.clear()
@@ -226,7 +229,7 @@ class MyUi(QMainWindow):
         db_origin = ""
         #if item.parent():
          #   db_origin = item.parent().text(0)
-        collec = str(item.text(0).encode("utf-8"))
+        collec = item.text(0)
         if len(indexes) > 0:
             level = 0
             index = indexes[0]
@@ -288,7 +291,7 @@ class MyUi(QMainWindow):
         # list1 = [self.tr(Stock+"-"+Choice+"-"+db_origin)]
         # self.ui.treewidget.addItems(list1)
         parent = QTreeWidgetItem(self.ui.treeWidget_2)
-        parent.setText(0, Stock.decode("utf-8") + "-" + Choice)
+        parent.setText(0, Stock+ "-" + Choice)
 
 
     def openWidgetMenu(self,position):
@@ -349,7 +352,8 @@ class MyUi(QMainWindow):
         #items = ([x.encode("utf-8") for x in labels])
         width = self.ui.webView.width()#give width and height of user's screen so that graphs can be generated with dynamic size
         height = self.ui.webView.height()
-        graphpage(labels, startdate,enddate,option,width, height)#labels:复权ork线or分笔 option:hfq, qfq or 15, 30, D, etc
+        mode_combo = self.ui.combobox.currentText()
+        graphpage(labels,mode_combo, startdate,enddate,option,width, height)#labels:复权ork线or分笔 option:hfq, qfq or 15, 30, D, etc
         self.ui.webView.reload()#refreshes webengine
         self.ui.webView.repaint()
         self.ui.webView.update()
@@ -366,7 +370,6 @@ class MyUi(QMainWindow):
         global CombineKeyword
         CombineKeyword = []
         self.ui.listwidget.clear()  #combine stuff so that different graphs can be drawn together
-
 
 app = QApplication(sys.argv)
 w = MyUi()

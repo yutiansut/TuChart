@@ -9,19 +9,6 @@
 from qtpy import QtCore, QtWidgets,QtGui
 from qtpy.QtWebEngineWidgets import QWebEngineView
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtWidgets.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtWidgets.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtWidgets.QApplication.translate(context, text, disambig)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -50,12 +37,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.init_category_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.init_category_btn.setMaximumSize(QtCore.QSize(90, 16777215))
+        self.init_category_btn.setMaximumSize(QtCore.QSize(105, 16777215))
         self.init_category_btn.setObjectName("init_category_btn")
         self.horizontalLayout_5.addWidget(self.init_category_btn)
         self.init_code_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.init_code_btn.setMinimumSize(QtCore.QSize(90, 0))
-        self.init_code_btn.setMaximumSize(QtCore.QSize(90, 16777215))
+        self.init_code_btn.setMinimumSize(QtCore.QSize(110, 0))
+        self.init_code_btn.setMaximumSize(QtCore.QSize(110, 16777215))
         self.init_code_btn.setObjectName("init_code_btn")
         self.horizontalLayout_5.addWidget(self.init_code_btn)
         self.gridLayout.addLayout(self.horizontalLayout_5, 2, 0, 1, 1)
@@ -111,7 +98,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.treeWidget.sizePolicy().hasHeightForWidth())
         self.treeWidget.setSizePolicy(sizePolicy)
         self.treeWidget.setMinimumSize(QtCore.QSize(160, 0))
-        self.treeWidget.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.treeWidget.setMaximumSize(QtCore.QSize(220, 16777215))
         self.treeWidget.setObjectName("treeWidget")
         self.treeWidget.headerItem().setText(0, "历史数据---右键菜单选择")
         self.gridLayout.addWidget(self.treeWidget, 3, 0, 1, 1)
@@ -123,7 +110,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
         self.label_4.setSizePolicy(sizePolicy)
-        self.label_4.setMaximumSize(QtCore.QSize(48, 16777215))
+        self.label_4.setMaximumSize(QtCore.QSize(60, 16777215))
         self.label_4.setObjectName("label_4")
         self.horizontalLayout.addWidget(self.label_4)
         self.search_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
@@ -230,4 +217,3 @@ class Ui_MainWindow(object):
         self.treeWidget_2.headerItem().setText(0,"绘图项")
         self.commandLinkButton.setText("开始绘图")
         self.action123.setText("123")
-
